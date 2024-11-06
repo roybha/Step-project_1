@@ -1,11 +1,13 @@
 package org.example;
 
-public class Passenger {
+public class Passenger implements HasID{
     private int id;
-    public int getId() {
+    @Override
+    public int getID() {
         return id;
     }
-    public void setId(int id) {
+    @Override
+    public void setID(int id) {
         this.id = id;
     }
     private String firstName;
