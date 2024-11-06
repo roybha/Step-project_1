@@ -3,12 +3,14 @@ package org.example;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Booking {
+public class Booking implements HasID{
     private int id;
-    public int getId() {
+    @Override
+    public int getID() {
         return id;
     }
-    public void setId(int id) {
+    @Override
+    public void setID(int id) {
         this.id = id;
     }
 
