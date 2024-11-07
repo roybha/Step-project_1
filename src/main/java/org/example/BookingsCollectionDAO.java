@@ -1,21 +1,27 @@
 package org.example;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class BookingsCollectionDAO implements BookingDAO{
     private List<Booking> bookings;
-    public BookingsCollectionDAO(List<Booking> bookings) {
+    public  BookingsCollectionDAO(List<Booking> bookings) {
         this.bookings = bookings;
     }
 
     @Override
-    public List<Booking> getAll() {
+    public  List<Booking> getAll() {
         return bookings;
     }
 
     @Override
     public Booking getByID(int id) {
-        return (id>=0 && id<bookings.size()) ? bookings.get(id) : null;
+        return (id >= 0)
+                ? bookings.stream()
+                .filter(flight -> flight.getID() == id)
+                .findFirst()
+                .orElse(null)
+                : null;
     }
 
     @Override
@@ -36,10 +42,17 @@ public class BookingsCollectionDAO implements BookingDAO{
 
     @Override
     public boolean deleteByID(int id) {
-        if(id>=0 && id<bookings.size()){
-            bookings.remove(bookings.get(id));
+        if(getByID(id)!=null){
+            delete(getByID(id));
             return true;
         }
         return false;
+    }
+
+    public   int getMaxId(){
+        return bookings.stream()
+                .mapToInt(Booking::getID)
+                .max()
+                .orElse(0);
     }
 }

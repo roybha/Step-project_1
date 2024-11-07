@@ -1,10 +1,31 @@
 package org.example;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 public class Booking implements HasID{
     private int id;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Booking booking = (Booking) obj;
+
+        return id == booking.id &&
+                Objects.equals(flight, booking.flight) &&
+                Objects.equals(passengers, booking.passengers) &&
+                Objects.equals(bookingDate, booking.bookingDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, flight, passengers, bookingDate);
+    }
+
     @Override
     public int getID() {
         return id;
@@ -25,9 +46,6 @@ public class Booking implements HasID{
     public List<Passenger> getPassengers() {
         return passengers;
     }
-    public void setPassengers(List<Passenger> passengers) {
-        this.passengers = passengers;
-    }
     private LocalDateTime bookingDate;
     public LocalDateTime getBookingDate() {
         return bookingDate;
@@ -35,19 +53,25 @@ public class Booking implements HasID{
     public void setBookingDate(LocalDateTime bookingDate) {
         this.bookingDate = bookingDate;
     }
-    private boolean isActive;
-    public boolean isActive() {
-        return isActive;
-    }
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
     public Booking(int id, Flight flight, List<Passenger> passengers) {
         this.id = id;
         this.flight = flight;
         this.passengers = passengers;
         this.bookingDate = LocalDateTime.now();
-        this.isActive = true;
+    }
+
+    @Override
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        String passengersInfo = passengers.stream()
+                .map(passenger -> passenger.getFirstName() + " " + passenger.getLastName())
+                .reduce((p1, p2) -> p1 + ", " + p2)
+                .orElse("Немає пасажирів");
+
+        return "Бронювання № " + id +
+                "\nРейс № " + flight.getID() +
+                "\nПасажири: " + passengersInfo +
+                "\nДата бронювання: " + bookingDate.format(formatter);
     }
 }
