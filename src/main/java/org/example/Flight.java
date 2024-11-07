@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -43,7 +44,7 @@ public class Flight implements HasID{
     public int getAvailableSeats(){
         return availableSeats;
     }
-    public void SetAvailableSeats(int seats){
+    public void setAvailableSeats(int seats){
         availableSeats = seats;
     }
     private int globalSeats;
@@ -53,11 +54,16 @@ public class Flight implements HasID{
     public void SetGlobalSeats(int seats){
         globalSeats = seats;
     }
-    public List<Booking> bookings;
+    public List<Passenger> getRegisteredPassengers(){
+        List<Passenger> passengers = new ArrayList<>();
+        bookings.stream().forEach(booking -> passengers.addAll(booking.getPassengers()));
+        return passengers;
+    }
+    private List<Booking> bookings;
     public List<Booking> getBookings(){
         return bookings;
     }
-    public void SetBookings(List<Booking> bookings){
+    public void setBookings(List<Booking> bookings){
         this.bookings = bookings;
     }
     public Flight(int id, LocalDateTime departureTime, LocalDateTime arrivalTime, int globalSeats, int availableSeats, String destination, String origin,List<Booking> bookings) {
@@ -70,9 +76,14 @@ public class Flight implements HasID{
         this.origin = origin;
         this.bookings = bookings;
     }
+    public  void addBooking(Booking booking){
+        if(!bookings.stream().anyMatch(b->b.equals(booking))){
+            bookings.add(booking);
+        }
+    }
     @Override
     public String toString() {
-        String dateFormat="yyyy-MM-dd HH:mm";
+        String dateFormat="dd-MM-yyyy HH:mm";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
         return "Рейс №" + id + "| Час вильоту: "+ formatter.format(ZonedDateTime.of(departureTime, ZoneId.of("GMT+2"))) + "| Час прибуття "+formatter.format(ZonedDateTime.of(arrivalTime, ZoneId.of("GMT+2")))+
                 "| Місто посадки: "+destination+"| Місто вильоту: "+origin+"| Загальна кількість місць: "+globalSeats +

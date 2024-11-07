@@ -40,4 +40,10 @@ public class PassengersCollectionDAO implements PassengerDAO {
          }
          return false;
     }
+    public void addPassengers(List<Passenger> passengers) {
+        this.passengers.addAll(passengers);
+    }
+    public void removePassengers(List<Passenger> passengers) {
+        this.passengers.removeAll(passengers);
+    }
 }

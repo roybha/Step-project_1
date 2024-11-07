@@ -1,6 +1,11 @@
 package org.example;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Stream;
 
 public class FlightsCollectionDAO implements FlightDAO{
     private List<Flight> flights;
@@ -11,13 +16,14 @@ public class FlightsCollectionDAO implements FlightDAO{
     public List<Flight> getAll() {
         return flights;
     }
-    public void setFlights(List<Flight> flights) {
-        this.flights = flights;
-    }
-
     @Override
     public Flight getByID(int id) {
-        return(id >= 0 && id < flights.size()) ? flights.get(id) : null;
+        return (id >= 0)
+                ? flights.stream()
+                .filter(flight -> flight.getID() == id)
+                .findFirst()
+                .orElse(null)
+                : null;
     }
 
     @Override
@@ -43,5 +49,98 @@ public class FlightsCollectionDAO implements FlightDAO{
             return true;
         }
         return false;
+    }
+    public Booking getFlightBookingByID(int id) {
+
+        return flights.stream()
+                .flatMap(flight -> flight.getBookings().stream())
+                .filter(booking -> booking.getID() == id)
+                .findFirst()
+                .orElse(null);
+    }
+    public  void removeFlightBookingByID(int id) {
+        flights.stream()
+                .filter(flight -> flight.getBookings().stream().anyMatch(booking -> booking.getID() == id))
+                .findFirst()
+                .ifPresent(flight -> flight.getBookings().removeIf(booking -> booking.getID() == id));
+    }
+    public void increaseAvailableSeatsByID(int id) {
+        flights.stream()
+                .filter(flight -> flight.getBookings().stream().anyMatch(booking -> booking.getID() == id))
+                .findFirst()
+                .ifPresent(flight -> {
+                    flight.getBookings().stream()
+                            .filter(booking -> booking.getID() == id)
+                            .findFirst()
+                            .ifPresent(booking -> {
+                                int passengers = booking.getPassengers().size(); // Отримуємо кількість пасажирів
+                                flight.setAvailableSeats(flight.getAvailableSeats() + passengers); // Збільшуємо кількість вільних місць
+                            });
+                });
+    }
+    public boolean isThereSuchFlightByID(int id) {
+        return flights.stream().anyMatch(flight -> flight.getID() == id);
+    }
+    public void CreateSomeFlights() {
+        Random rand = new Random();
+        List<Integer> previousID = new ArrayList<>();
+        String[] destinations = {"Софія", "Лондон", "Париж", "Токіо", "Берлін"};
+        String[] origins = {"Київ", "Варшава", "Стамбул", "Рим", "Мадрид"};
+
+        Stream.generate(() -> {
+                    int id;
+                    do{
+                        id = rand.nextInt(1,100);
+                    }while (previousID.contains(id));
+                    previousID.add(id);
+                    int globalSeats = rand.nextInt(20, 50);
+                    int availableSeats = rand.nextInt(1, globalSeats);
+
+                    LocalDateTime departureTime = LocalDateTime.of(
+                            LocalDateTime.now().getYear(),
+                            LocalDateTime.now().getMonth(),
+                            rand.nextInt(LocalDateTime.now().getDayOfMonth(), LocalDateTime.now().getMonth().length(false)),
+                            rand.nextInt(LocalDateTime.now().getHour()+1, 24),
+                            rand.nextInt(0, 60)
+                    );
+
+                    LocalDateTime arrivalTime = departureTime.plusHours(rand.nextInt(1, 11));
+                    String destination = destinations[rand.nextInt(destinations.length)];
+                    String origin = "Київ";
+                    List<Booking> bookings = new ArrayList<>();
+
+                    return new Flight(id, departureTime, arrivalTime, globalSeats, availableSeats, destination, origin, bookings);
+                })
+                .limit(3)
+                .forEach(this::save);
+
+        for (int i = 0; i < 20; i++) {
+            int id;
+            do{
+                id = rand.nextInt(1,100);
+            }while (previousID.contains(id));
+            previousID.add(id);
+            int globalSeats = rand.nextInt(20, 50);
+            int availableSeats = rand.nextInt(1, globalSeats);
+
+
+            LocalDateTime departureTime = LocalDateTime.of(
+                    LocalDateTime.now().getYear(),
+                    LocalDateTime.now().getMonth(),
+                    rand.nextInt(LocalDateTime.now().getDayOfMonth(), LocalDateTime.now().getMonth().length(false)),
+                    rand.nextInt(LocalDateTime.now().getHour()+1, 24),
+                    rand.nextInt(0, 60)
+            );
+
+
+            LocalDateTime arrivalTime = departureTime.plusHours(rand.nextInt(1, 11));
+
+            String destination = destinations[rand.nextInt(destinations.length)];
+            String origin = origins[rand.nextInt(origins.length)];
+            List<Booking> bookings = new ArrayList<>();
+
+            Flight fl = new Flight(id, departureTime, arrivalTime, globalSeats, availableSeats, destination, origin, bookings);
+            save(fl);
+        }
     }
 }
