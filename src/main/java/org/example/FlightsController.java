@@ -30,7 +30,7 @@ public class FlightsController {
         flightsService.removeFlightBookingById(bookingID);
     }
     public void increaseAvailableSeatsByBookingId(int bookingID) {
-        flightsService.increaseAvailableSeatsById(bookingID);
+        flightsService.increaseAvailableSeatsByBookingId(bookingID);
     }
     public boolean isThereSuchFlightByID(int flightID) {
         return flightsService.isThereSuchFlightById(flightID);

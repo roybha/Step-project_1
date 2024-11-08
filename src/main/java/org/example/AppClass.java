@@ -21,16 +21,16 @@ public class AppClass {
     }
     private void displayAllFlightsFromCity(){
         String city = inputOutputClass.getStringInput("Введіть місто");
-        if(!city.equals("")){
+        if(!city.isEmpty()){
             flightsController.displayAllFlightsFromCity(city);
         } else{
-            inputOutputClass.getMessage("Ви не ввели місто");
+            throw new WrongInputException("Місто не було введено");
         }
     }
     private void createBookingForFlight(Flight flight){
         int count = inputOutputClass.getIntInput("Введіть кількість людей,для яких потрібно створити бронювання");
         if(count == 0){
-            inputOutputClass.getMessage("Ви ввели некоректне число");
+            throw new WrongInputException("Кількість людей для бронювання має бути > 0");
         }
         else
         {
@@ -56,7 +56,7 @@ public class AppClass {
             createBookingForFlight(flightsController.getFlightById(index));
         }
         else {
-            inputOutputClass.getMessage("Введено некоректний ID");
+            throw new WrongInputException(String.format("Не знайдено рейсу з ID %d", index));
         }
     }
 
@@ -66,19 +66,18 @@ public class AppClass {
            inputOutputClass.printCollection(flightsController
                    .getBookingsForFlight(flightsController.getFlightById(index)));
         else{
-            System.out.println("Введено некоректний ID");
+            throw new WrongInputException(String.format("Не знайдено рейсу з ID %d", index));
         }
     }
     private void cancelBooking(){
         int bookingID = inputOutputClass.getIntInput("Введіть ID бронювання");
-
         if (bookingsController.deleteBooking(bookingID)) {
             flightsController.increaseAvailableSeatsByBookingId(bookingID);
             passengersController.removePassengers(flightsController.getFlightBookingById(bookingID).getPassengers());
             flightsController.removeFlightBookingById(bookingID);
             inputOutputClass.getMessage("Бронювання успішно видалено");
         } else {
-            inputOutputClass.getMessage("Не знайдено бронювання з таким ID");
+            throw new WrongInputException(String.format("Не занйдено бронювання з ID %d", bookingID));
         }
     }
     public void mainProgram() {
@@ -94,14 +93,19 @@ public class AppClass {
        inputOutputClass.optionDescription();
     }
     private void optionAction(String option){
-        switch (option.toLowerCase()) {
-            case "1":displayAllFlights();break;
-            case "2":displayAllFlightsFromCity();break;
-            case "3":bookSomeFlight();break;
-            case "4":showBookingsForFlight();break;
-            case "5":cancelBooking();break;
-            case "exit":System.exit(0);break;
-            default:break;
+        try {
+            switch (option.toLowerCase()) {
+                case "1":displayAllFlights();break;
+                case "2":displayAllFlightsFromCity();break;
+                case "3":bookSomeFlight();break;
+                case "4":showBookingsForFlight();break;
+                case "5":cancelBooking();break;
+                case "exit":inputOutputClass.getMessage("Завершення роботи програми");System.exit(0);break;
+                default:throw new WrongInputException("Відсутня опція "+option);
+            }
+        }catch (WrongInputException ex){
+            System.out.println(ex.getMessage());
         }
+
     }
 }
