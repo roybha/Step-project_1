@@ -35,4 +35,10 @@ public class FlightsController {
     public boolean isThereSuchFlightByID(int flightID) {
         return flightsService.isThereSuchFlightById(flightID);
     }
+    public void saveToFile(String fileName) {
+        flightsService.saveToFile(fileName);
+    }
+    public void loadFromFile(String fileName) {
+        flightsService.loadFromFile(fileName);
+    }
 }

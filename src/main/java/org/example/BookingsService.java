@@ -2,9 +2,11 @@ package org.example;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BookingsService {
     private  BookingsCollectionDAO bookingsCollectionDAO;
+    private static int currentPassengerNumber=0;
     public BookingsService() {
         bookingsCollectionDAO = new BookingsCollectionDAO(new ArrayList<>());
     }
@@ -66,6 +68,9 @@ public class BookingsService {
             return bookingDate.minusHours(random.nextInt(1,24));
         }
     }
+    public List<Booking> getBookingsForFlight(Flight flight) {
+        return bookingsCollectionDAO.getBookingsForFlight(flight);
+    }
     public Booking getBookingById(int id){
         return bookingsCollectionDAO.getByID(id);
     }
@@ -74,5 +79,11 @@ public class BookingsService {
     }
     private int getMaxBookingID(){
         return bookingsCollectionDAO.getMaxId();
+    }
+    public void saveToFile(String filename){
+        bookingsCollectionDAO.saveToFile(filename);
+    }
+    public void loadFromFile(String filename){
+        bookingsCollectionDAO.loadFromFile(filename);
     }
 }

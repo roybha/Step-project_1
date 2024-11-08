@@ -10,7 +10,7 @@ public class InputOutputClass {
         System.out.println("3 -> Забронювати рейс");
         System.out.println("4 -> Вивести всі бронювання по певному рейсу");
         System.out.println("5 -> Скасувати бронювання");
-        System.out.println("exit -> Завершити роботу програми");
+        System.out.println("exit -> Завершити роботу програми(!!!SAVE DATA!!!)");
     }
     public String getStringInput(String message){
         Scanner scanner = new Scanner(System.in);

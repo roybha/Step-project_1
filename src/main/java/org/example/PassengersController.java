@@ -21,4 +21,10 @@ public class PassengersController {
     public List<Passenger> getPassengers() {
         return passengerService.getPassengers().getAll();
     }
+    public void saveToFile(String fileName) {
+        passengerService.saveToFile(fileName);
+    }
+    public void loadFromFile(String fileName) {
+        passengerService.loadFromFile(fileName);
+    }
 }

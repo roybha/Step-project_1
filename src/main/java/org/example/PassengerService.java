@@ -39,4 +39,10 @@ public class PassengerService {
         }
         throw new WrongInputException("На 1 рейсі не можуть перебувати пасажири,що дублюють себе");
     }
+    public void saveToFile(String fileName) {
+       passengersCollectionDAO.saveToFile(fileName);
+    }
+    public void loadFromFile(String fileName) {
+       passengersCollectionDAO.loadFromFile(fileName);
+    }
 }

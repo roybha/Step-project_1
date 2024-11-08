@@ -12,9 +12,12 @@ public class AppClass {
         passengersController = new PassengersController();
         flightsController = new FlightsController();
         bookingsController = new BookingsController();
+        flightsController.loadFromFile("flights.dat");
+        passengersController.loadFromFile("passengers.dat");
+        bookingsController.loadFromFile("bookings.dat");
         inputOutputClass = new InputOutputClass();
-        flightsController.getAllFlights().forEach(flight -> flight.setBookings(bookingsController.generateSomeBookingsForFlight(flight)));
-        bookingsController.getBookings().forEach(booking -> passengersController.addPassengers(booking.getPassengers()));
+        flightsController.getAllFlights().forEach(flight -> flight.setBookings(bookingsController.getBookingsForFlight(flight)));
+
     }
     private void displayAllFlights(){
         flightsController.displayAllFlights();
@@ -73,7 +76,8 @@ public class AppClass {
         int bookingID = inputOutputClass.getIntInput("Введіть ID бронювання");
         if (bookingsController.deleteBooking(bookingID)) {
             flightsController.increaseAvailableSeatsByBookingId(bookingID);
-            passengersController.removePassengers(flightsController.getFlightBookingById(bookingID).getPassengers());
+            passengersController.removePassengers(
+                    flightsController.getFlightBookingById(bookingID).getPassengers());
             flightsController.removeFlightBookingById(bookingID);
             inputOutputClass.getMessage("Бронювання успішно видалено");
         } else {
@@ -92,6 +96,11 @@ public class AppClass {
     private void optionsDescription(){
        inputOutputClass.optionDescription();
     }
+    private void saveDataToFiles(){
+        flightsController.saveToFile("flights.dat");
+        passengersController.saveToFile("passengers.dat");
+        bookingsController.saveToFile("bookings.dat");
+    }
     private void optionAction(String option){
         try {
             switch (option.toLowerCase()) {
@@ -100,12 +109,15 @@ public class AppClass {
                 case "3":bookSomeFlight();break;
                 case "4":showBookingsForFlight();break;
                 case "5":cancelBooking();break;
-                case "exit":inputOutputClass.getMessage("Завершення роботи програми");System.exit(0);break;
+                case "exit":
+                    inputOutputClass.getMessage("Завершення роботи програми(SAVING DATA)");
+                    saveDataToFiles();
+                    System.exit(0);
+                    break;
                 default:throw new WrongInputException("Відсутня опція "+option);
             }
         }catch (WrongInputException ex){
-            System.out.println(ex.getMessage());
+            inputOutputClass.getMessage(ex.getMessage());
         }
-
     }
 }

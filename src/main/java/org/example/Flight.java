@@ -1,5 +1,6 @@
 package org.example;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -8,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Flight implements HasID{
+public class Flight implements Serializable,HasID{
+    private static final long serialVersionUID = 1L;
     private int id;
     @Override
     public int getID(){
@@ -63,6 +65,8 @@ public class Flight implements HasID{
     public List<Booking> getBookings(){
         return bookings;
     }
+
+
     public void setBookings(List<Booking> bookings){
         this.bookings = bookings;
     }

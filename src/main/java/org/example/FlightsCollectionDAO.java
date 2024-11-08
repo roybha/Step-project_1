@@ -1,5 +1,6 @@
 package org.example;
 
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +110,7 @@ public class FlightsCollectionDAO implements FlightDAO{
 
                     return new Flight(id, departureTime, arrivalTime, globalSeats, availableSeats, destination, origin, bookings);
                 })
-                .limit(3)
+                .limit(10)
                 .forEach(this::save);
 
         for (int i = 0; i < 20; i++) {
@@ -139,6 +140,25 @@ public class FlightsCollectionDAO implements FlightDAO{
 
             Flight fl = new Flight(id, departureTime, arrivalTime, globalSeats, availableSeats, destination, origin, bookings);
             save(fl);
+        }
+    }
+    @Override
+    public void saveToFile(String fileName){
+        try (FileOutputStream fileOut = new FileOutputStream(fileName);
+             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+            out.writeObject(flights);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void loadFromFile(String filename) {
+        try (FileInputStream fileIn = new FileInputStream(filename);
+             ObjectInputStream in = new ObjectInputStream(fileIn)) {
+            flights = (List<Flight>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }
