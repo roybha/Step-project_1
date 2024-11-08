@@ -21,7 +21,7 @@ public class BookingsController {
         return bookingsService.generateBookingsList(flight);
     }
     public Optional<Booking> getBookingById(int id) {
-        return Optional.of(bookingsService.getBookingById(id));
+        return Optional.ofNullable(bookingsService.getBookingById(id));
     }
     public boolean deleteBooking(int id) {
         return bookingsService.deleteBooking(id);

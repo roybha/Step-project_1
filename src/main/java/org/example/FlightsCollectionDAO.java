@@ -3,7 +3,6 @@ package org.example;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -41,11 +40,10 @@ public class FlightsCollectionDAO implements FlightDAO{
     public void delete(Flight flight) {
         flights.remove(flight);
     }
-
     @Override
     public boolean deleteByID(int id) {
-        if(id>=0 && id<flights.size()) {
-            delete(flights.get(id));
+        if(getByID(id)!=null) {
+            delete(getByID(id));
             return true;
         }
         return false;
@@ -64,7 +62,7 @@ public class FlightsCollectionDAO implements FlightDAO{
                 .findFirst()
                 .ifPresent(flight -> flight.getBookings().removeIf(booking -> booking.getID() == id));
     }
-    public void increaseAvailableSeatsByID(int id) {
+    public void increaseAvailableSeatsByBookingID(int id) {
         flights.stream()
                 .filter(flight -> flight.getBookings().stream().anyMatch(booking -> booking.getID() == id))
                 .findFirst()
@@ -100,7 +98,7 @@ public class FlightsCollectionDAO implements FlightDAO{
                             LocalDateTime.now().getYear(),
                             LocalDateTime.now().getMonth(),
                             rand.nextInt(LocalDateTime.now().getDayOfMonth(), LocalDateTime.now().getMonth().length(false)),
-                            rand.nextInt(LocalDateTime.now().getHour()+1, 24),
+                            rand.nextInt(LocalDateTime.now().getHour(), 24),
                             rand.nextInt(0, 60)
                     );
 
@@ -128,7 +126,7 @@ public class FlightsCollectionDAO implements FlightDAO{
                     LocalDateTime.now().getYear(),
                     LocalDateTime.now().getMonth(),
                     rand.nextInt(LocalDateTime.now().getDayOfMonth(), LocalDateTime.now().getMonth().length(false)),
-                    rand.nextInt(LocalDateTime.now().getHour()+1, 24),
+                    rand.nextInt(LocalDateTime.now().getHour(), 24),
                     rand.nextInt(0, 60)
             );
 

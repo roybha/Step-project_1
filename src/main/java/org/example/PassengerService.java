@@ -37,6 +37,6 @@ public class PassengerService {
             }
             return Optional.of(passengers);
         }
-        return Optional.empty();
+        throw new WrongInputException("На 1 рейсі не можуть перебувати пасажири,що дублюють себе");
     }
 }

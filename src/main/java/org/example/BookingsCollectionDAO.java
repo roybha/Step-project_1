@@ -16,7 +16,7 @@ public class BookingsCollectionDAO implements BookingDAO{
 
     @Override
     public Booking getByID(int id) {
-        return (id >= 0)
+        return (id >= 0 && !bookings.isEmpty())
                 ? bookings.stream()
                 .filter(flight -> flight.getID() == id)
                 .findFirst()
@@ -26,7 +26,7 @@ public class BookingsCollectionDAO implements BookingDAO{
 
     @Override
     public void save(Booking booking) {
-        if(!bookings.stream().anyMatch(b->b==booking)){
+        if(!bookings.stream().anyMatch(b->b.equals(booking))){
             bookings.add(booking);
         }
         else{

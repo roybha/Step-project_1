@@ -14,7 +14,12 @@ public class PassengersCollectionDAO implements PassengerDAO {
 
     @Override
     public Passenger getByID(int id) {
-        return (id>=0 && id<passengers.size()) ? passengers.get(id) : null;
+        return (id >= 0)
+                ? passengers.stream()
+                .filter(passenger ->passenger.getID() == id)
+                .findFirst()
+                .orElse(null)
+                : null;
     }
 
     @Override
@@ -34,7 +39,7 @@ public class PassengersCollectionDAO implements PassengerDAO {
 
     @Override
     public boolean deleteByID(int id) {
-         if(id>=0 && id<passengers.size()){
+         if(getByID(id)!=null){
              delete(getByID(id));
              return true;
          }

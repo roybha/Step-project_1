@@ -3,9 +3,7 @@ package org.example;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class FlightsService {
     private FlightsCollectionDAO flightsCollectionDAO;
@@ -20,14 +18,15 @@ public class FlightsService {
          flightsCollectionDAO.getAll().stream().forEach(System.out::println);
     }
     public void displayAllFlightsFromCity(String city){
-        if(flightsCollectionDAO.getAll().stream().anyMatch(flight -> flight.getOrigin().equals(city))){
+        if(flightsCollectionDAO.getAll().stream().anyMatch(flight -> flight.getOrigin().equals(city)
+                && flight.getDepartureTime().isBefore(LocalDateTime.now().plusHours(24)))){
             System.out.printf("Всі рейси з %s в найближчі 24 години\n",city);
             flightsCollectionDAO.getAll().stream()
                     .filter(flight -> flight.getOrigin().equals(city) && flight.getDepartureTime().isBefore(LocalDateTime.now().plusHours(24)))
                     .collect(Collectors.toCollection(ArrayList::new)).forEach(System.out::println);
         }
         else {
-            System.out.printf("Не знайдено рейсів з %s в найближчі 24 години\n", city);
+            throw new WrongInputException(String.format("Не знайдено рейсів з %s в найближчі 24 години", city));
         }
     }
     public Flight getFlightById(int id){
@@ -42,10 +41,13 @@ public class FlightsService {
     public void removeFlightBookingById(int id){
         flightsCollectionDAO.removeFlightBookingByID(id);
     }
-    public void increaseAvailableSeatsById(int id){
-        flightsCollectionDAO.increaseAvailableSeatsByID(id);
+    public void increaseAvailableSeatsByBookingId(int id){
+        flightsCollectionDAO.increaseAvailableSeatsByBookingID(id);
     }
     public boolean isThereSuchFlightById(int id){
         return flightsCollectionDAO.isThereSuchFlightByID(id);
+    }
+    public void addFlight(Flight flight){
+        flightsCollectionDAO.save(flight);
     }
 }

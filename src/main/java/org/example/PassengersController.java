@@ -18,4 +18,7 @@ public class PassengersController {
     public void removePassengers(List<Passenger> passengers) {
         passengerService.removePassengers(passengers);
     }
+    public List<Passenger> getPassengers() {
+        return passengerService.getPassengers().getAll();
+    }
 }
