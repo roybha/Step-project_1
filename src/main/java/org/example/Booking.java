@@ -1,11 +1,13 @@
 package org.example;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
-public class Booking implements HasID{
+public class Booking implements Serializable,HasID{
+    private static final long serialVersionUID = 1L;
     private int id;
 
     @Override

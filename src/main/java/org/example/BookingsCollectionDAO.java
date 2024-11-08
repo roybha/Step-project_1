@@ -1,7 +1,10 @@
 package org.example;
 
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class BookingsCollectionDAO implements BookingDAO{
     private List<Booking> bookings;
@@ -49,10 +52,36 @@ public class BookingsCollectionDAO implements BookingDAO{
         return false;
     }
 
+    @Override
+    public void saveToFile(String filename) {
+        try (FileOutputStream fileOut = new FileOutputStream(filename);
+             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+            out.writeObject(bookings);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void loadFromFile(String filename) {
+        try (FileInputStream fileIn = new FileInputStream(filename);
+             ObjectInputStream in = new ObjectInputStream(fileIn)) {
+            bookings= (List<Booking>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public   int getMaxId(){
         return bookings.stream()
                 .mapToInt(Booking::getID)
                 .max()
                 .orElse(0);
+    }
+    public List<Booking> getBookingsForFlight(Flight flight) {
+        List<Booking> flightBookings = new ArrayList<>();
+        return bookings.stream()
+                .filter(booking -> booking.getFlight().getID() == flight.getID())
+                .collect(Collectors.toList());
     }
 }

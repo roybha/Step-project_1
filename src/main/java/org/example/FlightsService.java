@@ -1,5 +1,8 @@
 package org.example;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +12,6 @@ public class FlightsService {
     private FlightsCollectionDAO flightsCollectionDAO;
     public FlightsService () {
         flightsCollectionDAO = new FlightsCollectionDAO(new ArrayList<>());
-        flightsCollectionDAO.CreateSomeFlights();
     }
     public List<Flight> getFlights(){
         return flightsCollectionDAO.getAll();
@@ -49,5 +51,12 @@ public class FlightsService {
     }
     public void addFlight(Flight flight){
         flightsCollectionDAO.save(flight);
+    }
+    // Збереження списку рейсів до файлу
+    public  void saveToFile(String fileName) {
+       flightsCollectionDAO.saveToFile(fileName);
+    }
+    public void loadFromFile(String fileName) {
+        flightsCollectionDAO.loadFromFile(fileName);
     }
 }

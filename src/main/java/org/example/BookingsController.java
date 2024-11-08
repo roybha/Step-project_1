@@ -20,11 +20,20 @@ public class BookingsController {
     public List<Booking> generateSomeBookingsForFlight(Flight flight) {
         return bookingsService.generateBookingsList(flight);
     }
+    public List<Booking> getBookingsForFlight(Flight flight) {
+        return bookingsService.getBookingsForFlight(flight);
+    }
     public Optional<Booking> getBookingById(int id) {
         return Optional.ofNullable(bookingsService.getBookingById(id));
     }
     public boolean deleteBooking(int id) {
         return bookingsService.deleteBooking(id);
+    }
+    public void saveToFile(String filename) {
+        bookingsService.saveToFile(filename);
+    }
+    public void loadFromFile(String filename) {
+        bookingsService.loadFromFile(filename);
     }
 }
 

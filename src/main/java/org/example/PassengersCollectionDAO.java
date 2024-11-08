@@ -1,5 +1,6 @@
 package org.example;
 
+import java.io.*;
 import java.util.List;
 
 public class PassengersCollectionDAO implements PassengerDAO {
@@ -45,6 +46,26 @@ public class PassengersCollectionDAO implements PassengerDAO {
          }
          return false;
     }
+
+    @Override
+    public void saveToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(passengers);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void loadFromFile(String filename) {
+        try (FileInputStream fileIn = new FileInputStream(filename);
+             ObjectInputStream in = new ObjectInputStream(fileIn)) {
+            passengers= (List<Passenger>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void addPassengers(List<Passenger> passengers) {
         this.passengers.addAll(passengers);
     }
