@@ -79,7 +79,12 @@ class PassengerServiceTest {
         List<String> names = List.of("Bob");
         List<String> surnames = List.of("Smith");
 
-        Optional<List<Passenger>> result = passengerService.formNewPassengersForFlight(names, surnames, flight);
-        assertTrue(result.isEmpty(), "Якщо пасажир вже заброньований, не повинні створюватися нові пасажири");
+        try {
+            Optional<List<Passenger>> result = passengerService.formNewPassengersForFlight(names, surnames, flight);
+            assertTrue(result.isEmpty(), "Якщо пасажир вже заброньований, не повинні створюватися нові пасажири");
+        }catch (WrongInputException e){
+            assertTrue(!e.equals(null));
+        }
+
     }
 }

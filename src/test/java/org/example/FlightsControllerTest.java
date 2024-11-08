@@ -19,9 +19,9 @@ public class FlightsControllerTest {
     @BeforeEach
     public void setUp() {
         flightsController = new FlightsController();
+        flightsController.loadFromFile("flights.dat");
         bookingsController = new BookingsController();
         flightsController.getAllFlights().forEach(flight -> flight.setBookings(bookingsController.generateSomeBookingsForFlight(flight)));
-         // Створення рейсів для тестів
         flight1 = new Flight(1, LocalDateTime.now() ,LocalDateTime.now().plusHours(3) , 100, 50,"Київ","Лондон",new ArrayList<>());
         flight2 = new Flight(2, LocalDateTime.now(),LocalDateTime.now().plusHours(2) , 80, 40,"Париж","Київ",new ArrayList<>());
     }
@@ -29,7 +29,7 @@ public class FlightsControllerTest {
     @Test
     public void testGetAllFlights() {
         List<Flight> flights = flightsController.getAllFlights();
-        assertEquals(23, flights.size(), "Має бути 23 рейси в списку");
+        assertEquals(30, flights.size(), "Має бути 30 рейсів в списку");
     }
 
     @Test

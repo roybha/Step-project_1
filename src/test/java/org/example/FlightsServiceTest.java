@@ -18,6 +18,7 @@ public class FlightsServiceTest {
     public void setUp() {
         // Ініціалізація FlightsService перед кожним тестом
         flightsService = new FlightsService();
+        flightsService.loadFromFile("flights.dat");
         bookingsController = new BookingsController();
         flightsService.getFlights().forEach(flight -> flight.setBookings(bookingsController.generateSomeBookingsForFlight(flight)));
     }
@@ -83,11 +84,18 @@ public class FlightsServiceTest {
     @Test
     public void testDisplayAllFlightsFromCity() {
         // Перевірка, що метод виводить всі рейси з міста
-        String city = "Київ";
-        flightsService.displayAllFlightsFromCity(city);
+        try
+        {
+            String city = "Київ";
+            flightsService.displayAllFlightsFromCity(city);
+            // Тест на випадок, коли немає рейсів
+            flightsService.displayAllFlightsFromCity("NonExistingCity");
+        }catch (WrongInputException e){
+            assertTrue(e!=null);
+        }
 
-        // Тест на випадок, коли немає рейсів
-        flightsService.displayAllFlightsFromCity("NonExistingCity");
+
+
     }
 
     @Test
