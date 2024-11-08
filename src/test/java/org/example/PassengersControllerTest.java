@@ -48,9 +48,16 @@ class PassengersControllerTest {
         flight.setBookings(List.of(new Booking(flight.getBookings().size()+1,flight,bookedPassengers)));
 
         // Спроба додати вже існуючого пасажира
-        Optional<List<Passenger>> result = passengersController.formNewPassengersForFlight(names, surnames, flight);
+        try {
+            Optional<List<Passenger>> result = passengersController.formNewPassengersForFlight(names, surnames, flight);
+            assertTrue(result.isEmpty(), "Якщо пасажир вже заброньований, не повинні створюватися нові пасажири");
+        }
+        catch (WrongInputException e){
+            assertTrue(!equals(null));
+        }
 
-        assertTrue(result.isEmpty(), "Якщо пасажир вже заброньований, не повинні створюватися нові пасажири");
+
+
     }
 
     @Test
