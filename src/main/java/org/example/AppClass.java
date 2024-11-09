@@ -8,10 +8,12 @@ public class AppClass {
     private FlightsController flightsController;
     private  BookingsController bookingsController;
     private InputOutputClass inputOutputClass;
+    private LoggerService loggerService;
     public AppClass() {
         passengersController = new PassengersController();
         flightsController = new FlightsController();
         bookingsController = new BookingsController();
+        loggerService = new LoggerService();
         flightsController.loadFromFile("flights.dat");
         passengersController.loadFromFile("passengers.dat");
         bookingsController.loadFromFile("bookings.dat");
@@ -21,18 +23,22 @@ public class AppClass {
     }
     private void displayAllFlights(){
         flightsController.displayAllFlights();
+        loggerService.info("Виведення інформації про всі рейси");
     }
     private void displayAllFlightsFromCity(){
         String city = inputOutputClass.getStringInput("Введіть місто");
         if(!city.isEmpty()){
-            flightsController.displayAllFlightsFromCity(city);
+            flightsController.displayAllFlightsFromCity(city,inputOutputClass);
+            loggerService.info("Виведення інформації про всі рейси в найближчі 24 години з міста "+city);
         } else{
+            loggerService.error("Місто не було введено");
             throw new WrongInputException("Місто не було введено");
         }
     }
     private void createBookingForFlight(Flight flight){
         int count = inputOutputClass.getIntInput("Введіть кількість людей,для яких потрібно створити бронювання");
         if(count == 0){
+            loggerService.error("Кількість людей для бронювання має бути > 0");
             throw new WrongInputException("Кількість людей для бронювання має бути > 0");
         }
         else
@@ -46,9 +52,11 @@ public class AppClass {
                     flight.setAvailableSeats(flight.getAvailableSeats() - count);
                     passengersController.addPassengers(passengers.get());
                 } else {
+                    loggerService.info("Спроба записати пасажира, що присутній на даному рейсі");
                     inputOutputClass.getMessage("На рейсі вже присутній пасажир з таким ім'ям та прізвищем, як Ви ввели");
                 }
             }else {
+                loggerService.info("Перевищення кількості введених бронювань над кількістю вільних місць");
                 inputOutputClass.getMessage("Не можна зробити бронювання для "+count+" людей, адже залишилось лише "+flight.getAvailableSeats()+" вільних місця на даному рейсі");
             }
         }
@@ -57,8 +65,10 @@ public class AppClass {
         int index =inputOutputClass.getIntInput("Введіть ID рейсу");
         if(index >=0 && flightsController.isThereSuchFlightByID(index)){
             createBookingForFlight(flightsController.getFlightById(index));
+            loggerService.info("Створення бронювання на рейс № "+index);
         }
         else {
+            loggerService.error(String.format("Спроба створити бронювання на неіснуючий рейс з ID %d",index));
             throw new WrongInputException(String.format("Не знайдено рейсу з ID %d", index));
         }
     }
@@ -66,9 +76,12 @@ public class AppClass {
     private void showBookingsForFlight(){
         int index = inputOutputClass.getIntInput("Введіть ID рейсу");
         if(index >= 0 && flightsController.isThereSuchFlightByID(index))
-           inputOutputClass.printCollection(flightsController
+        { inputOutputClass.printCollection(flightsController
                    .getBookingsForFlight(flightsController.getFlightById(index)));
+            loggerService.info(String.format("Показ усіх бронювань на рейс з ID %d",index));
+        }
         else{
+            loggerService.error(String.format("Спроба показати бронювання неіснуючого рейсу з ID %d",index));
             throw new WrongInputException(String.format("Не знайдено рейсу з ID %d", index));
         }
     }
@@ -80,7 +93,9 @@ public class AppClass {
                     flightsController.getFlightBookingById(bookingID).getPassengers());
             flightsController.removeFlightBookingById(bookingID);
             inputOutputClass.getMessage("Бронювання успішно видалено");
+            loggerService.info(String.format("Скасування бронювання з ID %d",bookingID));
         } else {
+            loggerService.error(String.format("Спроба скасувати  неіснуюче бронювання з ID %d",bookingID));
             throw new WrongInputException(String.format("Не занйдено бронювання з ID %d", bookingID));
         }
     }
@@ -100,6 +115,7 @@ public class AppClass {
         flightsController.saveToFile("flights.dat");
         passengersController.saveToFile("passengers.dat");
         bookingsController.saveToFile("bookings.dat");
+        loggerService.info("Завершення роботи програми,збереження інформації до файлів");
     }
     private void optionAction(String option){
         try {
@@ -114,7 +130,11 @@ public class AppClass {
                     saveDataToFiles();
                     System.exit(0);
                     break;
-                default:throw new WrongInputException("Відсутня опція "+option);
+                default:
+                {
+                    loggerService.error(String.format("Спроба виконати відсутню опцію %s", option));
+                    throw new WrongInputException("Відсутня опція "+option);
+                }
             }
         }catch (WrongInputException ex){
             inputOutputClass.getMessage(ex.getMessage());

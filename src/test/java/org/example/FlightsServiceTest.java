@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FlightsServiceTest {
     private FlightsService flightsService;
     private BookingsController bookingsController;
+    private InputOutputClass inputOutputClass;
 
     private Flight flight1;
     private Flight flight2;
@@ -18,6 +19,7 @@ public class FlightsServiceTest {
     public void setUp() {
         // Ініціалізація FlightsService перед кожним тестом
         flightsService = new FlightsService();
+        inputOutputClass = new InputOutputClass();
         flightsService.loadFromFile("flights.dat");
         bookingsController = new BookingsController();
         flightsService.getFlights().forEach(flight -> flight.setBookings(bookingsController.generateSomeBookingsForFlight(flight)));
@@ -87,9 +89,9 @@ public class FlightsServiceTest {
         try
         {
             String city = "Київ";
-            flightsService.displayAllFlightsFromCity(city);
+            flightsService.displayAllFlightsFromCity(city,inputOutputClass);
             // Тест на випадок, коли немає рейсів
-            flightsService.displayAllFlightsFromCity("NonExistingCity");
+            flightsService.displayAllFlightsFromCity("NonExistingCity",inputOutputClass);
         }catch (WrongInputException e){
             assertTrue(e!=null);
         }
