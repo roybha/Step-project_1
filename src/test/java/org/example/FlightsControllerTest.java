@@ -12,6 +12,7 @@ import java.util.List;
 public class FlightsControllerTest {
     private FlightsController flightsController;
     private BookingsController bookingsController;
+    private InputOutputClass inputOutputClass;
     private Flight flight1;
     private Flight flight2;
     private List<Passenger> passengers;
@@ -19,6 +20,7 @@ public class FlightsControllerTest {
     @BeforeEach
     public void setUp() {
         flightsController = new FlightsController();
+        inputOutputClass = new InputOutputClass();
         flightsController.loadFromFile("flights.dat");
         bookingsController = new BookingsController();
         flightsController.getAllFlights().forEach(flight -> flight.setBookings(bookingsController.generateSomeBookingsForFlight(flight)));
@@ -74,7 +76,7 @@ public class FlightsControllerTest {
         System.setOut(newOut);
 
         // Викликаємо метод для виведення рейсів з міста Київ
-        flightsController.displayAllFlightsFromCity(city);
+        flightsController.displayAllFlightsFromCity(city,inputOutputClass);
 
         // Повертаємо System.out на його оригінальне місце
         System.setOut(originalOut);

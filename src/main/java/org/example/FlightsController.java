@@ -14,8 +14,8 @@ public class FlightsController {
     public void displayAllFlights() {
         flightsService.displayAllFlights();
     }
-    public void displayAllFlightsFromCity(String city) {
-        flightsService.displayAllFlightsFromCity(city);
+    public void displayAllFlightsFromCity(String city,InputOutputClass inputOutputClass) {
+        flightsService.displayAllFlightsFromCity(city,inputOutputClass);
     }
     public  List<Booking> getBookingsForFlight(Flight flight) {
         return flightsService.getFlightBookings(flight);

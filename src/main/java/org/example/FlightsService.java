@@ -19,10 +19,10 @@ public class FlightsService {
     public void displayAllFlights(){
          flightsCollectionDAO.getAll().stream().forEach(System.out::println);
     }
-    public void displayAllFlightsFromCity(String city){
+    public void displayAllFlightsFromCity(String city,InputOutputClass inputOutputClass){
         if(flightsCollectionDAO.getAll().stream().anyMatch(flight -> flight.getOrigin().equals(city)
                 && flight.getDepartureTime().isBefore(LocalDateTime.now().plusHours(24)))){
-            System.out.printf("Всі рейси з %s в найближчі 24 години\n",city);
+            inputOutputClass.getMessage(String.format("Всі рейси з міста %s", city));
             flightsCollectionDAO.getAll().stream()
                     .filter(flight -> flight.getOrigin().equals(city) && flight.getDepartureTime().isBefore(LocalDateTime.now().plusHours(24)))
                     .collect(Collectors.toCollection(ArrayList::new)).forEach(System.out::println);
